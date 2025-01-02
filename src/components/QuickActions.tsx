@@ -17,11 +17,15 @@ type QuickActionButtonProps = {
 
 const QuickActionButton = ({ icon: Icon, label, onClick, colorClass }: QuickActionButtonProps) => (
   <button 
-    className={`flex items-center justify-center ${colorClass} hover:bg-accent rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12`}
+    className={`flex sm:items-center justify-center ${colorClass} hover:bg-accent rounded-lg shadow hover:shadow-md transition-all duration-200 w-full
+    sm:h-12 sm:p-3 sm:space-x-2
+    flex-col items-center min-h-[4rem] p-2 space-y-1 sm:flex-row sm:space-y-0`}
     onClick={onClick}
   >
-    <Icon className="h-4 w-4" />
-    <span className="text-sm font-medium">{label}</span>
+    <Icon className="h-5 w-5 sm:h-4 sm:w-4" />
+    <span className="text-[10px] sm:text-sm font-medium text-center sm:text-left max-w-full sm:max-w-none line-clamp-2 sm:line-clamp-none">
+      {label}
+    </span>
   </button>
 );
 

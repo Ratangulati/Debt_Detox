@@ -18,7 +18,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Links */}
-          <div className="gap-4">
+          <div className="hidden md:flex items-center gap-4 ">
             <Link to="/demo_dashboard">
               <Button variant="ghost" className="text-zinc-400 hover:text-white hover:bg-transparent">
                 Demo
@@ -43,15 +43,15 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden flex flex-col gap-2 mt-4">
-            <Link to="/pricing" onClick={toggleMenu}>
-              <Button variant="ghost" className="text-zinc-400 hover:text-white w-full">
-                Pricing
+          <div className="md:hidden flex flex-col gap-2 mt-4 mb-8">
+            <Link to="/auth" onClick={toggleMenu}>
+              <Button variant="ghost" className="text-zinc-400 hover:text-black w-full justify-start">
+                Sign In
               </Button>
             </Link>
-            <Link to="/sign-in" onClick={toggleMenu}>
-              <Button variant="ghost" className="text-zinc-400 hover:text-white w-full">
-                Sign In
+            <Link to="/demo_dashboard" onClick={toggleMenu}>
+              <Button variant="ghost" className="text-zinc-400 hover:text-black w-full justify-start">
+                Demo
               </Button>
             </Link>
           </div>

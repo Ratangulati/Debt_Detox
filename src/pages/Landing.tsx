@@ -31,7 +31,7 @@ const features = [
 
 const Landing = () => {
   return (
-    <div className="min-h-screen border-t border-zinc-800 py-8 bg-black text-white">
+    <div className="min-h-screen border-t border-zinc-800 pt-8 bg-black text-white">
       <main>
 
         <Navbar />
