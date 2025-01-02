@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight} from "lucide-react";
 import DashboardCard from "./DebtDashboard";
 import { useNavigate } from "react-router-dom";
 
@@ -23,12 +23,12 @@ export function HeroSection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
             <Button
-              className="bg-white text-black hover:bg-zinc-200 w-full md:w-auto"
+              className="bg-white text-black hover:bg-zinc-200 w-full md:w-auto "
               onClick={() => navigate("/auth")}
               size="lg"
             >
               Get Started
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
