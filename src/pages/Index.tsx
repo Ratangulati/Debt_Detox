@@ -1,4 +1,4 @@
-import { CreditCard, Building, ArrowLeft } from "lucide-react";
+import { CreditCard, Building, ArrowLeft, LucideIcon } from "lucide-react";
 import { DashboardStats } from "../components/dashboard/DashboardStats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { AchievementList } from "../components/dashboard/AchievementsList";
@@ -8,6 +8,27 @@ import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Debt } from "../components/dashboard/types";
+
+type QuickActionButtonProps = {
+  icon: LucideIcon; 
+  label: string;
+  onClick?: () => void; 
+  colorClass: string;
+};
+
+const QuickActionButton = ({ icon: Icon, label, onClick, colorClass }: QuickActionButtonProps) => (
+  <button 
+    className={`flex sm:items-center justify-center ${colorClass} hover:bg-accent rounded-lg shadow hover:shadow-md transition-all duration-200 w-full
+    sm:h-12 sm:p-3 sm:space-x-2
+    flex-col items-center min-h-[4rem] p-2 space-y-1 sm:flex-row sm:space-y-0`}
+    onClick={onClick}
+  >
+    <Icon className="h-5 w-5 sm:h-4 sm:w-4" />
+    <span className="text-[10px] sm:text-sm font-medium text-center sm:text-left max-w-full sm:max-w-none line-clamp-2 sm:line-clamp-none">
+      {label}
+    </span>
+  </button>
+);
 
 
 const DemoDashboard = () => {
@@ -171,37 +192,33 @@ const DemoDashboard = () => {
         <div className="fixed bottom-4 left-0 right-0 z-50">
           <div className="container max-w-screen-xl mx-auto">
             <div className="grid grid-cols-4 gap-6 mt-6">
-              <button
-                className="flex items-center justify-center bg-black text-white hover:bg-black/80 rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12"
+              <QuickActionButton 
+                icon={DollarSign} 
+                label="Make a Payment" 
+                colorClass="bg-black text-white hover:bg-black/80"
                 onClick={handleToast}
-              >
-                <DollarSign className="h-4 w-4" />
-                <span className="text-sm font-medium">Make a Payment</span>
-              </button>
+              />
 
-              <button
-                className="flex items-center justify-center bg-card text-black hover:bg-accent rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12"
+              <QuickActionButton 
+                icon={Calculator} 
+                label="Debt Calculator" 
+                colorClass="bg-card"
                 onClick={handleToast}
-              >
-                <Calculator className="h-4 w-4" />
-                <span className="text-sm font-medium">Debt Calculator</span>
-              </button>
+              />
 
-              <button
-                className="flex items-center justify-center bg-card text-black hover:bg-accent rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12"
+              <QuickActionButton 
+                icon={BarChart} 
+                label="Payment Simulator" 
+                colorClass="bg-card"
                 onClick={handleToast}
-              >
-                <BarChart className="h-4 w-4" />
-                <span className="text-sm font-medium">Debt Progress</span>
-              </button>
+              />
 
-              <button
-                className="flex items-center justify-center bg-card text-black hover:bg-accent rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12"
-                onClick={handleToast}
-              >
-                <Plus className="h-4 w-4" />
-                <span className="text-sm font-medium">Add Debt</span>
-              </button>
+              <QuickActionButton 
+              icon={Plus} 
+              label="Add Debt"
+              colorClass="bg-card" 
+              onClick={handleToast}
+            />
             </div>
           </div>
         </div>
