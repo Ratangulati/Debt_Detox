@@ -1,8 +1,8 @@
 import { Button } from "../ui/button";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import DashboardCard from "./DebtDashboard";
-import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export function HeroSection() {
   const navigate = useNavigate();
