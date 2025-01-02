@@ -1,22 +1,37 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { ScrollArea } from './ui/scroll-area';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export const DebtCalculator = () => {
-  const [principal, setPrincipal] = useState(0);
-  const [interestRate, setInterestRate] = useState(0);
-  const [loanTerm, setLoanTerm] = useState(0);
-  const [monthlyPayment, setMonthlyPayment] = useState(null);
-  const [totalInterest, setTotalInterest] = useState(null);
-  const [totalPayment, setTotalPayment] = useState(null);
-  const [paymentSchedule, setPaymentSchedule] = useState([]);
-  const [chartData, setChartData] = useState([]);
+interface PaymentSchedule {
+  month: number;
+  payment: string;
+  interest: string;
+  principal: string;
+  remaining: string | number;
+}
 
+interface ChartData {
+  month: number;
+  remainingBalance: number;
+  totalInterest: number;
+}
+
+
+export const DebtCalculator = () => {
+  const [principal, setPrincipal] = useState<number>(0);
+  const [interestRate, setInterestRate] = useState<number>(0);
+  const [loanTerm, setLoanTerm] = useState<number>(0);
+  const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
+  const [totalInterest, setTotalInterest] = useState<number | null>(null);
+  const [totalPayment, setTotalPayment] = useState<number | null>(null);
+  const [paymentSchedule, setPaymentSchedule] = useState<PaymentSchedule[]>([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  
   const calculateDebt = () => {
     const interestRateMonthly = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
@@ -26,8 +41,8 @@ export const DebtCalculator = () => {
     const monthlyPaymentAmount = principal * (numerator / denominator);
 
     let remainingPrincipal = principal;
-    let schedule = [];
-    let graphData = [];
+    let schedule: PaymentSchedule[] = [];
+    let graphData: ChartData[] = [];
     let totalInterestPaid = 0;
 
     for (let i = 1; i <= numberOfPayments; i++) {

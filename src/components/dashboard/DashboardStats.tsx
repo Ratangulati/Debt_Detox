@@ -1,19 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Progress } from "../ui/progress";
 import { DollarSign, Bell, Trophy } from "lucide-react";
 import { differenceInDays } from "date-fns";
+import { Debt } from "./types";
 
-
-interface Debt {
-  id: string;
-  name: string;
-  amount: number;
-  total_amount: number;
-  next_payment_date: string;
-  next_payment_amount: number;
-  payment_frequency: string;
-  interest_rate: number;
-}
 
 interface DashboardStatsProps {
   totalDebt: number;

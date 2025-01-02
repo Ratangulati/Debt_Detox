@@ -1,6 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CreditCard, Building, ArrowLeft } from "lucide-react";
-import { differenceInDays } from "date-fns";
 import { DashboardStats } from "../components/dashboard/DashboardStats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { AchievementList } from "../components/dashboard/AchievementsList";
@@ -8,17 +6,9 @@ import { toast } from "../components/ui/use-toast";
 import { BarChart, Calculator, DollarSign, Plus } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Debt } from "../components/dashboard/types";
 
-type Debt = {
-  id: string;
-  name: string;
-  amount: number;
-  totalAmount: number;
-  dueDate: string;
-  interestRate: number;
-  next_payment_date: string;
-  next_payment_amount: number;
-};
 
 const DemoDashboard = () => {
   const debts: Debt[] = [
@@ -26,31 +16,34 @@ const DemoDashboard = () => {
       id: "1",
       name: "Credit Card A",
       amount: 5000,
-      totalAmount: 10000,
-      dueDate: "2025-05-15",
-      interestRate: 15.99,
-      next_payment_date: "2025-03-01",
-      next_payment_amount: 945,
+      total_amount: 10000,
+      due_date: "2025-05-15",
+      interest_rate: 15.99,
+      next_payment_date: "2025-03-01", 
+      next_payment_amount: 945, 
+      payment_frequency: "Monthly",
     },
     {
       id: "2",
       name: "Personal Loan",
       amount: 15000,
-      totalAmount: 25000,
-      dueDate: "2028-05-20",
-      interestRate: 8.5,
-      next_payment_date: "2025-04-10",
-      next_payment_amount: 545,
+      total_amount: 25000,
+      due_date: "2028-05-20",
+      interest_rate: 8.5,
+      next_payment_date: "2025-04-10", 
+      next_payment_amount: 545, 
+      payment_frequency: "Monthly",
     },
     {
       id: "3",
       name: "Student Loan",
       amount: 30000,
-      totalAmount: 50000,
-      dueDate: "2026-05-25",
-      interestRate: 4.5,
-      next_payment_date: "2025-06-01",
-      next_payment_amount: 1045,
+      total_amount: 50000,
+      due_date: "2026-05-25",
+      interest_rate: 4.5,
+      next_payment_date: "2025-06-01", 
+      next_payment_amount: 1045, 
+      payment_frequency: "Monthly",
     },
   ];
 
@@ -84,9 +77,9 @@ const DemoDashboard = () => {
         </header>
 
         <DashboardStats
-          totalDebt={debts.reduce((acc, debt) => acc + debt.amount, 0)}
-          nextPaymentAmount={debts[0]?.next_payment_amount || 0}
-          nextPaymentDate={debts[0]?.next_payment_date || "N/A"}
+          totalDebt={debts.reduce((acc, debt) => acc + debt.amount, 0)} 
+          nextPaymentAmount={debts[0]?.next_payment_amount || 0} 
+          nextPaymentDate={debts[0]?.next_payment_date || "N/A"} 
           paidOffDebts={debts.filter((d) => d.amount === 0).length}
           debts={debts}
         />
@@ -107,38 +100,34 @@ const DemoDashboard = () => {
                 <ul className="space-y-4">
                   {sortedDebts
                     .filter((debt) => debt.amount > 0)
-                    .map((debt) => {
-                      const daysUntilPayment = debt.dueDate
-                        ? differenceInDays(new Date(debt.dueDate), new Date())
-                        : null;
-
-                      return (
-                        <li key={debt.id} className="flex items-center space-x-4">
-                          <div className="bg-secondary rounded-full p-2">
-                            {debt.name.toLowerCase().includes("credit") ? (
-                              <CreditCard className="h-4 w-4" />
-                            ) : (
-                              <Building className="h-4 w-4" />
-                            )}
+                    .map((debt) => (
+                      <li key={debt.id} className="flex items-center space-x-4">
+                        <div className="bg-secondary rounded-full p-2">
+                          {debt.name.toLowerCase().includes("credit") ? (
+                            <CreditCard className="h-4 w-4" />
+                          ) : (
+                            <Building className="h-4 w-4" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium">{debt.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            Due: {debt.due_date}
                           </div>
-                          <div className="flex-1">
-                            <div className="font-medium">{debt.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              Due: {debt.dueDate ? new Date(debt.dueDate).toLocaleDateString() : "N/A"}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              ${debt.amount.toLocaleString()}
-                            </div>
+                          <div className="text-sm text-muted-foreground">
+                            ${debt.amount.toLocaleString()}
                           </div>
-                          <div className="text-right">
-                            <div className="font-medium text-red-500 mb-1">
-                              {debt.interestRate}% APR
-                            </div>
-                            <Button variant="primary" onClick={handleToast} >Pay</Button>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium text-red-500 mb-1">
+                            {debt.interest_rate}% APR
                           </div>
-                        </li>
-                      );
-                    })}
+                          <Button variant="primary" onClick={handleToast}>
+                            Pay
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
                 </ul>
               </CardContent>
             </Card>
@@ -152,28 +141,24 @@ const DemoDashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {debts.map((debt) => {
-                  const daysUntilPayment = debt.next_payment_date
-                    ? differenceInDays(new Date(debt.next_payment_date), new Date())
-                    : null;
-                  return (
-                    <div
-                      key={debt.id}
-                      className="flex items-center space-x-4"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium">{debt.name}</p>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          Due: {debt.next_payment_date ? new Date(debt.next_payment_date).toLocaleDateString() : "N/A"}
-                        </div>
-                        <p className="text-sm text-muted-foreground">${debt.next_payment_amount?.toLocaleString()}</p>
+                {debts.map((debt) => (
+                  <div key={debt.id} className="flex items-center space-x-4">
+                    <div className="flex-1">
+                      <p className="font-medium">{debt.name}</p>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        Due: {debt.next_payment_date}
                       </div>
-                      <div className="text-right items-center gap-4">
-                        <Button variant="primary" onClick={handleToast} >Pay Now</Button>
-                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        ${debt.next_payment_amount.toLocaleString()}
+                      </p>
                     </div>
-                  );
-                })}
+                    <div className="text-right items-center gap-4">
+                      <Button variant="primary" onClick={handleToast}>
+                        Pay Now
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </TabsContent>
@@ -207,7 +192,7 @@ const DemoDashboard = () => {
                 onClick={handleToast}
               >
                 <BarChart className="h-4 w-4" />
-                <span className="text-sm font-medium">Payment Simulator</span>
+                <span className="text-sm font-medium">Debt Progress</span>
               </button>
 
               <button

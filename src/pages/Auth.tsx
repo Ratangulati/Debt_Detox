@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { AuthForm } from "@/components/AuthForm";
+import { AuthForm } from "../components/AuthForm";
 
 const Auth = () => {
   return (

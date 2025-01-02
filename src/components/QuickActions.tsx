@@ -1,13 +1,21 @@
-import { DollarSign, Calculator, Plus, Bell, BarChart, Trophy, X } from "lucide-react";
+import { DollarSign, Calculator, Plus, BarChart, LucideIcon } from "lucide-react";
 import { AddDebtDialog } from "./AddDebtDialog";;
 import { DebtCalculator } from "./DebtCalculator";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { useState } from "react";
 import PaymentSimulator from "./PaymentSimulator";
 import { toast } from "./ui/use-toast";
 
+type QuickActionButtonProps = {
+  icon: LucideIcon; 
+  label: string;
+  onClick?: () => void; 
+  colorClass: string;
+};
 
-const QuickActionButton = ({ icon: Icon, label, onClick, colorClass }) => (
+
+
+const QuickActionButton = ({ icon: Icon, label, onClick, colorClass }: QuickActionButtonProps) => (
   <button 
     className={`flex items-center justify-center ${colorClass} hover:bg-accent rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12`}
     onClick={onClick}
@@ -27,7 +35,7 @@ const handlePaymentComingSoon = () => {
 
 export const QuickActions = () => {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  // const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   return ( 

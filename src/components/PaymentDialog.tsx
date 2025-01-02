@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { useToast } from "./ui/use-toast";
+import { supabase } from "../integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { getNextPaymentDate } from "../utils/dateUtils";
 
@@ -52,7 +52,7 @@ export const PaymentDialog = ({
       const nextPaymentDate = getNextPaymentDate(
         new Date(),
         debtData.payment_frequency,
-        debtData.next_payment_date
+        debtData.next_payment_date ?? new Date().toISOString() 
       );
 
       // Update the debt with new amount and next payment date

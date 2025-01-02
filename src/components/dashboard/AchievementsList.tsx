@@ -1,18 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Debt } from "./types";
 
-interface Debt {
-  id: string;
-  name: string;
-  amount: number;
-  next_payment_date: string;
-  next_payment_amount: number;
-  payment_frequency: string;
-  interest_rate: number;
-}
+
 interface AchievementListProps {
   debts: Debt[];
 }
+
 export const AchievementList = ({ debts }: AchievementListProps) => {
   return (
     <Card>
@@ -27,7 +21,7 @@ export const AchievementList = ({ debts }: AchievementListProps) => {
                     <div className="flex-1">
                     <div className="font-medium">{debt.name} Paid Off!</div>
                     <div className="text-sm text-muted-foreground">
-                        Original amount: ${debt.total_amount?.toLocaleString()}
+                        Original amount: ${debt.total_amount ? debt.total_amount.toLocaleString() : 'N/A'}
                     </div>
                     </div>
                 </li>

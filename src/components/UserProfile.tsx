@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,13 +8,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+} from "./ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 import { User } from "@supabase/supabase-js";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "./ui/use-toast";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { supabase } from "../integrations/supabase/client";
 
 export const UserProfile = () => {
   const navigate = useNavigate();

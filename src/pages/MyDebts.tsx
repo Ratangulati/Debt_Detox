@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ArrowUpDown, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../integrations/supabase/client";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 
 export const MyDebts = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -27,14 +27,19 @@ export const MyDebts = () => {
         .order("due_date", { ascending: sortOrder === "asc" });
 
       if (error) throw error;
+
       const sortedData = data || [];
       return sortedData.sort((a, b) => {
         const aIsPaid = a.amount === 0;
         const bIsPaid = b.amount === 0;
         if (aIsPaid !== bIsPaid) return aIsPaid ? 1 : -1;
-        return sortOrder === "asc" 
-          ? new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
-          : new Date(b.due_date).getTime() - new Date(a.due_date).getTime();
+        
+        const aDueDate = a.due_date ? new Date(a.due_date).getTime() : 0;
+        const bDueDate = b.due_date ? new Date(b.due_date).getTime() : 0;
+
+        return sortOrder === "asc"
+          ? aDueDate - bDueDate
+          : bDueDate - aDueDate;
       });
     },
   });
@@ -48,6 +53,7 @@ export const MyDebts = () => {
 
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
+  console.log("my debts", debts)
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
@@ -75,7 +81,7 @@ export const MyDebts = () => {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {debts.map((debt) => (
-          <Card 
+          <Card
             key={debt.id} 
             className={`hover:shadow-lg transition-shadow ${debt.amount === 0 ? 'opacity-75' : ''}`}
           >
@@ -87,30 +93,26 @@ export const MyDebts = () => {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Original Amount</span>
-                  <span className="font-medium">${debt.total_amount.toFixed(2)}</span>
-                </div>
+                  <span className="font-medium">${debt.total_amount ? debt.total_amount.toFixed(2) : 'N/A'}</span>
+                  </div>
                 <div className="flex justify-between">
                   <span>Current Amount</span>
-                  <span className="font-medium">${debt.amount.toFixed(2)}</span>
-                </div>
+                  <span className="font-medium">${debt.amount ? debt.amount.toFixed(2) : '0.00'}</span>
+                  </div>
                 {debt.interest_rate && (
                   <div className="flex justify-between">
                     <span>Interest Rate</span>
                     <span className="font-medium">{debt.interest_rate}%</span>
-                  </div>
+                    </div>
                 )}
                 <div className="flex justify-between">
                   <span>Due Date</span>
-                  <span className="font-medium">{new Date(debt.due_date).toLocaleDateString()}</span>
+                  <span className="font-medium">{debt.due_date ? new Date(debt.due_date).toLocaleDateString() : 'N/A'}</span>
                 </div>
-                {/* <div className="flex justify-between">
-                  <span>First Payment Date</span>
-                  <span className="font-medium">
-                    {debt.payment_history && debt.payment_history.length > 0
-                      ? new Date(debt.payment_history[debt.payment_history.length - 1].payment_date).toLocaleDateString()
-                      : 'No payments yet'}
-                  </span>
-                </div> */}
+                <div className="flex justify-between">
+                  <span>Created on</span>
+                  <span className="font-medium">{new Date(debt.created_at).toLocaleDateString()}</span>
+                </div>
                 
                 {debt.payment_history && debt.payment_history.length > 0 && (
                   <div className="mt-4 pt-4 border-t">

@@ -1,9 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "./ui/use-toast";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+
+
 
 // Get environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -26,9 +28,8 @@ const supabase = supabaseUrl && supabaseUrl.startsWith('https://') && supabaseAn
 export const AuthForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false); // Toggle between Sign In and Sign Up
+  const [isSignUp, setIsSignUp] = useState(false); 
   const { toast } = useToast();
   const navigate = useNavigate();
 

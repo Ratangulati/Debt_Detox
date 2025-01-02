@@ -1,15 +1,20 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { Plus, X } from "lucide-react";
 import { DebtForm } from "./DebtForm";
 import { PaymentScheduleDisplay } from "./PaymentScheduleDisplay";
-import { calculatePayment } from "@/utils/calculatePayment";
 import { getNextPaymentDate } from "../utils/dateUtils";
+import { calculatePayment } from "../utils/calculatePayment";
+import { useToast } from "./ui/use-toast";
+import { supabase } from "../integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
-export const AddDebtDialog = () => {
+import { ReactNode } from "react";
+
+interface AddDebtDialogProps {
+  children: ReactNode; 
+}
+
+export const AddDebtDialog = ({ children }: AddDebtDialogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -95,21 +100,12 @@ export const AddDebtDialog = () => {
     }
   };
 
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button className="flex items-center justify-center bg-card hover:bg-accent/50 rounded-lg p-3 shadow hover:shadow-md transition-all duration-200 space-x-2 w-full h-12 ">
-          <Plus className="h-4 w-4" />
-          <span className="text-sm font-medium">Add Debt</span>
-        </button>
-      </DialogTrigger>
-      <DialogContent  className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogTrigger asChild>{children}</DialogTrigger> {/* Render children */}
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle className="font-xl ">Add New Debt</DialogTitle>
-          {/* <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
-            <X className="h-4 w-4" />
-          </Button> */}
         </DialogHeader>
         <div className="mt-2">
           <div className="space-y-4 overflow-y-auto max-h-[80vh]">
@@ -131,8 +127,8 @@ export const AddDebtDialog = () => {
               />
             </div>
           )}
-      </div>
-    </DialogContent>
-  </Dialog>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

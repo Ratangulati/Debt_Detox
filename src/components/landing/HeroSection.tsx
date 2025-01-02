@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import DashboardCard from "./DebtDashboard";
 import { useNavigate } from "react-router-dom";

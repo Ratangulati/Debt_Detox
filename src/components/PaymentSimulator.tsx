@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { ScrollArea } from "./ui/scroll-area";
+
+type SimulationResults = {
+  months: number;
+  totalInterestPaid: number;
+  totalPaid: number;
+  willPayOff: boolean;
+};
+
 
 export const PaymentSimulator = () => {
-  const [currentDebt, setCurrentDebt] = useState(0);
-  const [interestRate, setInterestRate] = useState(0);
-  const [monthlyPayment, setMonthlyPayment] = useState(0);
-  const [results, setResults] = useState(null);
+  const [currentDebt, setCurrentDebt] = useState<number>(0);
+  const [interestRate, setInterestRate] = useState<number>(0);
+  const [monthlyPayment, setMonthlyPayment] = useState<number>(0);
+  const [results, setResults] = useState<SimulationResults | null>(null);
 
   const runSimulation = () => {
     let remainingDebt = currentDebt;

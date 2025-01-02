@@ -1,7 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuickActions } from "../components/QuickActions";
 import { useEffect, useRef, useState } from "react";
 import { DashboardHeader } from "../components/dashboard/DashboardHeader";
@@ -10,23 +7,51 @@ import { DebtsList } from "../components/dashboard/DebtsList";
 import { PaymentReminders } from "../components/dashboard/PaymentReminders";
 import { AchievementList } from "../components/dashboard/AchievementsList";
 import confetti from 'canvas-confetti';
+import { supabase } from "../integrations/supabase/client";
+import { Debt } from "../components/dashboard/types";
+import { useToast } from "../components/ui/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+
+interface DbDebt {
+  id: string;
+  name: string;
+  amount: number;
+  total_amount: number | null;
+  payment_frequency: string;
+  interest_rate: number;
+  interest_type: string;
+  next_payment_date: string | null;
+  next_payment_amount: number | null;
+  due_date: string | null;
+  created_at: string;
+  updated_at: string;
+  user_id: string | null;
+}
+
+interface DbPayment {
+  id: string;
+  debt_id: string | null;
+  amount: number;
+  payment_date: string | null;
+  created_at: string | null;
+}
 
 const Dashboard = () => {
   const { toast } = useToast();
   const [showCelebration, setShowCelebration] = useState(false);
   const [completedDebt, setCompletedDebt] = useState<string | null>(null);
 
-  const { data: debts = [] } = useQuery({
+  const { data: dbDebts = [] } = useQuery<DbDebt[]>({
     queryKey: ["debts"],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
           .from("debts")
           .select("*")
-          .order("next_payment_date", { ascending: true});
+          .order("next_payment_date", { ascending: true });
 
-          if (error) throw error;
-          return data || [];
+        if (error) throw error;
+        return data || [];
       } catch (error: any) {
         toast({
           title: "Error fetching debts",
@@ -37,6 +62,18 @@ const Dashboard = () => {
       }
     },
   });
+
+  const debts: Debt[] = dbDebts.map(debt => ({
+    id: debt.id,
+    name: debt.name,
+    amount: debt.amount,
+    total_amount: debt.total_amount ?? debt.amount,
+    payment_frequency: debt.payment_frequency,
+    interest_rate: debt.interest_rate,
+    next_payment_date: debt.next_payment_date ?? "",  
+    next_payment_amount: debt.next_payment_amount ?? 0, 
+    due_date: debt.due_date ?? "",
+  }));
 
   const totalDebt = debts.reduce((acc, debt) => acc + debt.amount, 0);
 
@@ -50,12 +87,11 @@ const Dashboard = () => {
   }, {});
 
   // Get the earliest date and its total payment amount
-  const nextPaymentDate = Object.keys(nextPaymentsByDate).sort()[0];
+  const nextPaymentDate = Object.keys(nextPaymentsByDate).sort()[0] ?? "";
   const nextPaymentAmount = nextPaymentDate ? nextPaymentsByDate[nextPaymentDate] : 0;
 
-
   // Check for completed debts
-  const previousDebtsRef = useRef([]);
+  const previousDebtsRef = useRef<Debt[]>([]);
 
   useEffect(() => {
     const checkCompletedDebts = async () => {
@@ -72,40 +108,42 @@ const Dashboard = () => {
         .limit(1);
 
       if (payments && payments.length > 0) {
-        const lastPayment = payments[0];
-        const relatedDebt = debts.find(d => d.id === lastPayment.debt_id);
-        
-        // Check if debt was previously existing and had a balance
-        const previousDebt = previousDebtsRef.current.find(
-          d => d.id === lastPayment.debt_id
-        );
-        
-        if (relatedDebt && 
-            relatedDebt.amount === 0 && 
-            previousDebt && 
-            previousDebt.amount > 0) {
-          
-          // Check if payment is recent (within last 5 minutes)
-          const paymentDate = new Date(lastPayment.created_at);
-          const now = new Date();
-          const paymentIsRecent = (now - paymentDate) < 1000 * 60 * 5;
+        const lastPayment = payments[0] as DbPayment;
+        if (lastPayment.created_at && lastPayment.debt_id) {
+          const relatedDebt = debts.find(d => d.id === lastPayment.debt_id);
 
-          if (paymentIsRecent) {
-            setCompletedDebt(relatedDebt.name);
-            setShowCelebration(true);
-            confetti({
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 }
-            });
-            
-            toast({
-              title: "Congratulations! 🎉",
-              description: `You've paid off your ${relatedDebt.name}!`,
-              className: "animate-celebrate"
-            });
+          // Check if debt was previously existing and had a balance
+          const previousDebt = previousDebtsRef.current.find(
+            d => d.id === lastPayment.debt_id
+          );
 
-            setTimeout(() => setShowCelebration(false), 5000);
+          if (relatedDebt &&
+              relatedDebt.amount === 0 &&
+              previousDebt &&
+              previousDebt.amount > 0) {
+
+            // Check if payment is recent (within last 5 minutes)
+            const paymentTime = new Date(lastPayment.created_at).getTime();
+            const currentTime = new Date().getTime();
+            const paymentIsRecent = (currentTime - paymentTime) < 1000 * 60 * 5;
+
+            if (paymentIsRecent) {
+              setCompletedDebt(relatedDebt.name);
+              setShowCelebration(true);
+              confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+              });
+
+              // toast({
+              //   title: "Congratulations! 🎉",
+              //   description: `You've paid off your ${relatedDebt.name}!`,
+              //   className: "animate-celebrate"
+              // });
+
+              setTimeout(() => setShowCelebration(false), 5000);
+            }
           }
         }
       }
@@ -115,7 +153,7 @@ const Dashboard = () => {
     };
 
     checkCompletedDebts();
-  }, [debts]);
+  }, [debts, toast]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -154,6 +192,14 @@ const Dashboard = () => {
           <QuickActions />
         </div>
       </div>
+
+      {/* Celebration Banner */}
+      {showCelebration && completedDebt && (
+        <div className="fixed top-0 left-0 right-0 p-4 bg-green-500 text-white text-center animate-slide-in">
+          <h2>Congratulations!</h2>
+          <p>You have paid off {completedDebt}!</p>
+        </div>
+      )}
     </div>
   );
 };

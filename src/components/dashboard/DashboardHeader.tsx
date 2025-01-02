@@ -1,4 +1,5 @@
-import { UserProfile } from "@/components/UserProfile";
+import UserProfile from "../UserProfile";
+
 export const DashboardHeader = () => {
   return (
     <header className="mb-8 flex justify-between items-center">
